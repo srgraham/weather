@@ -3,8 +3,12 @@ _ = require 'lodash'
 
 request = require 'request'
 
+parseXmlString = require('xml2js').parseString
 
-parseXmlString = require('xml2js').parseString;
+
+
+config = require '../config/api'
+
 
 module.exports.getRiverLocations = (lat, lng, {bounds_lat_delta=0.4144, bounds_lng_delta=1.4447}, callback)->
 
@@ -39,7 +43,18 @@ module.exports.getRiverLocations = (lat, lng, {bounds_lat_delta=0.4144, bounds_l
       callback null, out
 
 
+module.exports.getForecastForLatLng = (lat, lng, callback)->
+  url = "https://api.darksky.net/forecast/#{config.forecast_key}/#{lat},#{lng}"
 
-module.exports.getForecastForLatLng(lat, lng, callback)->
-  url = "https://api.darksky.net/forecast/#{api_key}/#{lat},#{lng}"
+  callback null, require('../out.json')
+  return
+
+  request url, (err, response, json)->
+    if err
+      callback err
+      return
+
+    out = JSON.parse(json)
+    callback null, out
+
   return
