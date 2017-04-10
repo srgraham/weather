@@ -42,10 +42,10 @@ module.exports = ({forecast_key, use_cache})->
 
         callback null, out
 
-
+  # alert when its about to rain
   out.getForecastForLatLng = (lat, lng, callback)->
     if use_cache
-      callback null, require('forecast_example.json')
+      callback null, require('./forecast_example.json')
       return
 
     url = "https://api.darksky.net/forecast/#{forecast_key}/#{lat},#{lng}"
