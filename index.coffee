@@ -8,9 +8,9 @@ parseXmlString = require('xml2js').parseString
 
 module.exports = ({forecast_key, use_cache})->
 
-  out = {}
+  out_all = {}
 
-  out.getRiverLocations = (lat, lng, {bounds_lat_delta=0.4144, bounds_lng_delta=1.4447}, callback)->
+  out_all.getRiverLocations = (lat, lng, {bounds_lat_delta=0.4144, bounds_lng_delta=1.4447}, callback)->
 
     lat0 = lat - bounds_lat_delta
     lat1 = lat + bounds_lat_delta
@@ -43,7 +43,7 @@ module.exports = ({forecast_key, use_cache})->
         callback null, out
 
   # alert when its about to rain
-  out.getForecastForLatLng = (lat, lng, callback)->
+  out_all.getForecastForLatLng = (lat, lng, callback)->
     if use_cache
       if use_cache is 'rain'
         out = require('./rain_example.json')
@@ -64,4 +64,28 @@ module.exports = ({forecast_key, use_cache})->
 
     return
 
-  return out
+  out_all.getWindDirectionStr = (wind_bearing)->
+    wind_directions = ['\u2191N', '\u2197NE', '\u2192E', '\u2198SE', '\u2193S', '\u2199SW', '\u2190W', '\u2196NW']
+
+    bearing_index = (wind_bearing + 22.5) // 45
+    out = wind_directions[bearing_index]
+    return out
+
+  out_all.getEmojiForIcon = (icon)->
+    emojis =
+      'clear-day': '\u2600'
+      'clear-night': '\ud83c\udf19'
+      'rain': '\ud83c\udf27'
+      'snow': '\u2744'
+      'sleet': 'sleet'
+      'wind': '\ud83d\udca8'
+      'fog': '\ud83c\udf2b'
+      'cloudy': '\u2601'
+      'partly-cloudy-day': '\ud83c\udf24'
+      'partly-cloudy-night': 'night clouds'
+
+    out = emojis[icon] ? ''
+    return out
+
+
+  return out_all
