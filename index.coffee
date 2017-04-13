@@ -146,7 +146,7 @@ module.exports = ({forecast_key, use_cache})->
 
     svg = new Buffer """
       <svg width="#{width}" height="#{height}" viewPort="0 0 #{width} #{height}" xmlns="http://www.w3.org/2000/svg">
-        <polygon fill="#3bd" stroke-width="0" points="#{points.join(' ')}" />
+        <polygon fill="#8ad" stroke-width="0" points="#{points.join(' ')}" />
         #{lines_intervals.join '\n'}
         #{dotted_lines.join '\n'}
         #{texts.join '\n'}
