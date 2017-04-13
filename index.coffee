@@ -90,10 +90,6 @@ module.exports = ({forecast_key, use_cache})->
     return out
 
   out_all.drawRainForHour = (minutely_data, callback)->
-    if arguments.length is 2
-      callback = file_path
-      file_path = null
-
     height = 160
     width = 320
 
