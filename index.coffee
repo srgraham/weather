@@ -125,11 +125,11 @@ module.exports = ({forecast_key, use_cache})->
 
     getDashedLine = (x1, y1, x2, y2)->
       out = """
-        <path d="M #{x1} #{y1} L #{x2} #{y2}" stroke="rgba(0,0,0,0.7)" stroke-dasharray="2,2" />
+        <path d="M #{x1} #{y1} L #{x2} #{y2}" stroke="rgba(0, 0, 0, 0.7)" stroke-dasharray="2,2" />
       """
       return out
       
-    dotted_lines = _.map [0.1, 0.2], (val)->
+    dotted_lines = _.map [0.0, 0.1, 0.2], (val)->
       y = (1 - (val / precip_height)) * graph_height
       out = getDashedLine(0, y, graph_width, y)
       return out
@@ -146,7 +146,7 @@ module.exports = ({forecast_key, use_cache})->
 
     svg = new Buffer """
       <svg width="#{width}" height="#{height}" viewPort="0 0 #{width} #{height}" xmlns="http://www.w3.org/2000/svg">
-        <polygon fill="#58c" stroke-width="0" points="#{points.join(' ')}" />
+        <polygon fill="rgba(85, 136, 204, 0.7)" stroke-width="0" points="#{points.join(' ')}" />
         #{lines_intervals.join '\n'}
         #{dotted_lines.join '\n'}
         #{texts.join '\n'}
