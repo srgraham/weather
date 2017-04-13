@@ -125,7 +125,7 @@ module.exports = ({forecast_key, use_cache})->
 
     getDashedLine = (x1, y1, x2, y2)->
       out = """
-        <path d="M #{x1} #{y1} L #{x2} #{y2}" stroke="black" stroke-dasharray="5,10,5" />
+        <path d="M #{x1} #{y1} L #{x2} #{y2}" stroke="#111" stroke-dasharray="2,4,2" />
       """
       return out
       
@@ -140,13 +140,16 @@ module.exports = ({forecast_key, use_cache})->
       x = x = Math.round (graph_width / 60) * minute
       y = height
       out = """
-        <text text-anchor="middle" x="#{x}" y="#{y}" style="font-family: Consolas">#{minute}min</text>
+        <text text-anchor="middle" x="#{x}" y="#{y}" style="font-family: Lato">#{minute}min</text>
       """
       return out
 
     svg = new Buffer """
       <svg width="#{width}" height="#{height}" viewPort="0 0 #{width} #{height}" xmlns="http://www.w3.org/2000/svg">
-        <polygon fill="#8ad" stroke-width="0" points="#{points.join(' ')}" />
+<style>
+*{stroke-width: 5}
+</style>
+        <polygon fill="#58c" stroke-width="0" points="#{points.join(' ')}" />
         #{lines_intervals.join '\n'}
         #{dotted_lines.join '\n'}
         #{texts.join '\n'}
