@@ -5,6 +5,8 @@ request = require 'request'
 
 parseXmlString = require('xml2js').parseString
 
+sharp = require 'sharp'
+
 
 module.exports = ({forecast_key, use_cache})->
 
@@ -87,5 +89,83 @@ module.exports = ({forecast_key, use_cache})->
     out = emojis[icon] ? ''
     return out
 
+  out_all.drawRainForHour = (minutely_data, callback)->
+
+    height = 160
+    width = 320
+
+    padding_bottom = 20
+    padding_right = 40
+
+    graph_height = height - padding_bottom
+    graph_width = width - padding_right
+
+    max_precip_intensity = _.max _.map minutely_data, 'precipIntensity'
+
+    precip_height = _.max [max_precip_intensity, .3]
+
+    points = _.map minutely_data, (obj, index)->
+
+      x = (graph_width / 60) * index
+      y = (1 - (obj.precipIntensity / precip_height)) * graph_height
+      out = [Math.round(x), Math.round(y)].join ','
+      return out
+
+    points.push [graph_width, graph_height]
+    points.push [0, graph_height]
+
+    lines_intervals = _.map [0, 10, 20, 30, 40, 50], (val)->
+      x = Math.round (graph_width / 60) * val
+      y = graph_height
+
+      out = """
+        <path d="M #{x} #{y} L #{x} #{y + 10}" stroke="black" />
+      """
+      return out
+
+
+    getDashedLine = (x1, y1, x2, y2)->
+      out = """
+        <path d="M #{x1} #{y1} L #{x2} #{y2}" stroke="black" stroke-dasharray="5,10,5" />
+      """
+      return out
+      
+    dotted_lines = _.map [0.1, 0.2], (val)->
+      y = (1 - (val / precip_height)) * graph_height
+      out = getDashedLine(0, y, graph_width, y)
+      return out
+
+    dotted_lines.push getDashedLine(graph_width, 0, graph_width, graph_height)
+
+    texts = _.map [10,30,50], (minute)->
+      x = x = Math.round (graph_width / 60) * minute
+      y = height
+      out = """
+        <text text-anchor="middle" x="#{x}" y="#{y}" style="font-family: Consolas">#{minute}min</text>
+      """
+      return out
+
+    svg = new Buffer """
+      <svg width="#{width}" height="#{height}" viewPort="0 0 #{width} #{height}" xmlns="http://www.w3.org/2000/svg">
+        <polygon fill="#3bd" stroke-width="0" points="#{points.join(' ')}" />
+        #{lines_intervals.join '\n'}
+        #{dotted_lines.join '\n'}
+        #{texts.join '\n'}
+      </svg>
+    """
+
+    console.log 'svg', svg.toString()
+
+    sharp(svg).resize(width, height).png().toFile './test.png', ()->
+      console.log 44324, arguments
+      callback null, arguments
+      return
+
+    console.log 123
+
+
+
+    return
 
   return out_all
+
