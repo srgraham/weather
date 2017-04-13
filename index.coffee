@@ -89,7 +89,7 @@ module.exports = ({forecast_key, use_cache})->
     out = emojis[icon] ? ''
     return out
 
-  out_all.drawRainForHour = (minutely_data, callback)->
+  out_all.drawRainForHour = (minutely_data, file_path, callback)->
 
     height = 160
     width = 320
@@ -154,17 +154,9 @@ module.exports = ({forecast_key, use_cache})->
       </svg>
     """
 
-    console.log 'svg', svg.toString()
-
-    sharp(svg).resize(width, height).png().toFile './test.png', ()->
-      console.log 44324, arguments
-      callback null, arguments
+    sharp(svg).resize(width, height).png().toFile file_path, ->
+      callback arguments...
       return
-
-    console.log 123
-
-
-
     return
 
   return out_all
