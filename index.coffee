@@ -93,8 +93,10 @@ module.exports = ({forecast_key, use_cache})->
     height = 160
     width = 320
 
-    padding_bottom = 20
-    padding_right = 40
+    padding_bottom = 0
+    padding_right = 0
+
+    interval_line_height = 10
 
     graph_height = height - padding_bottom
     graph_width = width - padding_right
@@ -113,12 +115,12 @@ module.exports = ({forecast_key, use_cache})->
     points.push [graph_width, graph_height]
     points.push [0, graph_height]
 
-    lines_intervals = _.map [0, 10, 20, 30, 40, 50], (val)->
+    lines_intervals = _.map [10, 20, 30, 40, 50], (val)->
       x = Math.round (graph_width / 60) * val
       y = graph_height
 
       out = """
-        <path d="M #{x} #{y} L #{x} #{y + 10}" stroke="black" />
+        <path d="M #{x} #{y} L #{x} #{y - interval_line_height}" stroke="black" />
       """
       return out
 
@@ -129,18 +131,16 @@ module.exports = ({forecast_key, use_cache})->
       """
       return out
       
-    dotted_lines = _.map [0.0, 0.1, 0.2], (val)->
+    dotted_lines = _.map [0.1, 0.2], (val)->
       y = (1 - (val / precip_height)) * graph_height
       out = getDashedLine(0, y, graph_width, y)
       return out
-
-    dotted_lines.push getDashedLine(graph_width, 0, graph_width, graph_height)
 
     texts = _.map [10,30,50], (minute)->
       x = x = Math.round (graph_width / 60) * minute
       y = height
       out = """
-        <text text-anchor="middle" x="#{x}" y="#{y}" style="font-family: Lato">#{minute}min</text>
+        <text text-anchor="middle" x="#{x}" y="#{y - interval_line_height * 1.5}" style="font-family: Lato">#{minute}min</text>
       """
       return out
 
