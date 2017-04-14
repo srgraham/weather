@@ -75,16 +75,16 @@ module.exports = ({forecast_key, use_cache})->
 
   out_all.getEmojiForIcon = (icon)->
     emojis =
-      'clear-day': '\u2600'
+      'clear-day': '\u2600\ufe0f'
       'clear-night': '\ud83c\udf19'
       'rain': '\ud83c\udf27'
-      'snow': '\u2744'
-      'sleet': 'sleet'
+      'snow': '\u2744\ufe0f'
+      'sleet': ''
       'wind': '\ud83d\udca8'
       'fog': '\ud83c\udf2b'
-      'cloudy': '\u2601'
+      'cloudy': '\u2601\ufe0f'
       'partly-cloudy-day': '\ud83c\udf24'
-      'partly-cloudy-night': 'night clouds'
+      'partly-cloudy-night': ''
 
     out = emojis[icon] ? ''
     return out
