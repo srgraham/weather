@@ -84,7 +84,7 @@ module.exports = ({forecast_key, use_cache})->
       'fog': '\ud83c\udf2b'
       'cloudy': '\u2601\ufe0f'
       'partly-cloudy-day': '\ud83c\udf24'
-      'partly-cloudy-night': '\ud83c\udf19'
+      'partly-cloudy-night': '\u2601\ufe0f'
 
     out = emojis[icon] ? ''
     return out
