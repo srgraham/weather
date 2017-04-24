@@ -69,7 +69,7 @@ module.exports = ({forecast_key, use_cache})->
   out_all.getWindDirectionStr = (wind_bearing)->
     wind_directions = ['\u2191N', '\u2197NE', '\u2192E', '\u2198SE', '\u2193S', '\u2199SW', '\u2190W', '\u2196NW']
 
-    bearing_index = (wind_bearing + 22.5 + 180) // 45 %% 360
+    bearing_index = (wind_bearing + 22.5 + 180) // 45 %% (360 / 45)
     out = wind_directions[bearing_index]
     return out
 
