@@ -44,6 +44,39 @@ module.exports = ({forecast_key, use_cache})->
 
         callback null, out
 
+  out_all.snowToWaterRatio = (temperature)->
+    if _.isUndefined temperature
+      return 10.0
+  
+    magic_number = Math.min(75.0, (0.005986595422 * temperature - 1.0127734) * temperature + 34.31493722)
+  
+    return _.max([8.0, magic_number])
+
+
+  dataPointToHeightPercentage = (obj)->
+    intensity = obj.precipIntensity ? 0
+    intensity *= (1 - Math.cos((obj.precipProbability ? 0) * Math.PI)) * 0.5
+
+    if intensity < 0.0019
+      return 0
+
+    if(obj.precipType is "snow")
+        intensity *= 0.5 * snowToWaterRatio(obj.temperature)
+
+    intensity = 4 * (1 - Math.exp(-2.209389806 * Math.sqrt(intensity)))
+
+    # convert to height percentage
+    if intensity <= 1
+      intensity *= 0.15
+    else if intensity <= 2
+      intensity = 0.15 + ((intensity - 1.0) * (0.33 - 0.15))
+    else if intensity <= 3
+      intensity = 0.33 + ((intensity - 2.0) * (0.67 - 0.33))
+    else
+      intensity = 0.67 + ((intensity - 3.0) * (1.0 - 0.67))
+
+    return intensity
+
   # alert when its about to rain
   out_all.getForecastForLatLng = (lat, lng, callback)->
     if use_cache
@@ -101,14 +134,10 @@ module.exports = ({forecast_key, use_cache})->
     graph_height = height - padding_bottom
     graph_width = width - padding_right
 
-    max_precip_intensity = _.max _.map minutely_data, 'precipIntensity'
-
-    precip_height = _.max [max_precip_intensity, .3]
-
     points = _.map minutely_data, (obj, index)->
 
       x = (graph_width / 60) * index
-      y = (1 - (obj.precipIntensity / precip_height)) * graph_height
+      y = (1 - dataPointToHeightPercentage(obj)) * graph_height
       out = [Math.round(x), Math.round(y)].join ','
       return out
 
@@ -131,8 +160,8 @@ module.exports = ({forecast_key, use_cache})->
       """
       return out
       
-    dotted_lines = _.map [0.1, 0.2], (val)->
-      y = (1 - (val / precip_height)) * graph_height
+    dotted_lines = _.map [0.33, 0.66], (val)->
+      y = (1 - val) * graph_height
       out = getDashedLine(0, y, graph_width, y)
       return out
 
