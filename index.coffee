@@ -44,7 +44,7 @@ module.exports = ({forecast_key, use_cache})->
 
         callback null, out
 
-  out_all.snowToWaterRatio = (temperature)->
+  out_all.snowToWaterRatio = snowToWaterRatio = (temperature)->
     if _.isUndefined temperature
       return 10.0
   
@@ -53,7 +53,7 @@ module.exports = ({forecast_key, use_cache})->
     return _.max([8.0, magic_number])
 
 
-  dataPointToHeightPercentage = (obj)->
+  out_all.dataPointToHeightPercentage = dataPointToHeightPercentage = (obj)->
     intensity = obj.precipIntensity ? 0
     intensity *= (1 - Math.cos((obj.precipProbability ? 0) * Math.PI)) * 0.5
 
